@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PEMSApi.Data;
 using Transaction = PEMSApi.Models.Transaction;
@@ -17,14 +18,29 @@ namespace PEMSApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions()
+        public async Task<IActionResult> GetTransactions([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
+            var skipAmount = (pageNumber - 1) * pageSize;
+
             var transactions = await _context.Transactions
                 .Include(t => t.Category)
                 .OrderByDescending(t => t.TransactionDate)
+                .Skip(skipAmount)
+                .Take(pageSize)
                 .ToListAsync();
 
-            return Ok(transactions);
+            var totalRecords = await _context.Transactions.CountAsync();
+
+            var response = new
+            {
+                Data = transactions,
+                TotalRecords = totalRecords,
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("categories")]
