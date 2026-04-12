@@ -59,7 +59,15 @@ namespace PEMSApi.Controllers
             var categoryExists = await _context.Categories.AnyAsync(c => c.Id == transaction.CategoryId);
             if (!categoryExists) return BadRequest("Danh mục không tồn tại");
 
-            if (transaction.TransactionDate == default) transaction.TransactionDate = DateTime.Now;
+            if (transaction.TransactionDate == default)
+            {
+                transaction.TransactionDate = DateTime.UtcNow;
+            }
+            else
+            {
+                // Ép kiểu về utc để  postgresql chịu lưu
+                transaction.TransactionDate = transaction.TransactionDate.ToUniversalTime();
+            }
 
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();

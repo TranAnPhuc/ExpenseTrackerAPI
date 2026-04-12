@@ -1,8 +1,8 @@
 {
-    "files.autoSave": "onFocusChange",
-    "editor.formatOnSave": true,
-    "editor.fontSize": 16,
-    "editor.inlineSuggest.edits.allowCodeShifting": "never",
-    "editor.inlineSuggest.edits.renderSideBySide": "never",
-    "editor.inlineSuggest.enabled": false
+  "files.autoSave": "onWindowChange",
+  "editor.formatOnSave": true,
+  "editor.fontSize": 16,
+  "editor.inlineSuggest.edits.allowCodeShifting": "never",
+  "editor.inlineSuggest.edits.renderSideBySide": "never",
+  "editor.inlineSuggest.enabled": false
 }

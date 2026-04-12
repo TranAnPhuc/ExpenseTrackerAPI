@@ -14,6 +14,16 @@ namespace PEMSApi
             builder.Services.AddDbContext<AppDbContext>(options
                 => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                policy =>
+                {
+                    policy.WithOrigins("http://127.0.0.1:5500")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +38,9 @@ namespace PEMSApi
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
+
+            // app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
