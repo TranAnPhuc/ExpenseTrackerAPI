@@ -182,11 +182,12 @@
                 renderTransactions(transactions);
                 renderPagination(responseData.totalPages, responseData.currentPage);
                 document.getElementById('total-records-badge').innerText = `Tổng: ${responseData.totalRecords} bản ghi`;
-
-                // TẠM THỜI: Vẫn gọi hàm tính toán trên tập dữ liệu của 1 trang để thấy lỗi Bug Dashboard
-                calculateSummary(transactions);
                 renderChart(transactions);
 
+                document.getElementById('total-income').innerText = formatCurrency(responseData.totalIncome);
+                document.getElementById('total-expense').innerText = formatCurrency(responseData.totalExpense);
+                document.getElementById('balance').innerText = formatCurrency(responseData.balance);
+                document.getElementById('balance').className = `text-2xl font-bold ${responseData.balance >= 0 ? 'text-blue-600' : 'text-red-600'}`;
             } catch (error) {
                 listElement.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-red-500">Lỗi: ${error.message}</td></tr>`;
             }
@@ -269,17 +270,6 @@
         }
 
         // --- CÁC HÀM XỬ LÝ KHÁC ĐƯỢC GIỮ NGUYÊN TỪ PHIÊN BẢN TRƯỚC ---
-        function calculateSummary(transactions) {
-            let income = 0, expense = 0;
-            transactions.forEach(t => {
-                if (t.category.type) expense += t.amount; else income += t.amount;
-            });
-
-            document.getElementById('total-income').innerText = formatCurrency(income);
-            document.getElementById('total-expense').innerText = formatCurrency(expense);
-            document.getElementById('balance').innerText = formatCurrency(income - expense);
-            document.getElementById('balance').className = `text-2xl font-bold ${income - expense >= 0 ? 'text-blue-600' : 'text-red-600'}`;
-        }
 
         function renderChart(transactions) {
             const expenseTransactions = transactions.filter(t => t.category.type === true);

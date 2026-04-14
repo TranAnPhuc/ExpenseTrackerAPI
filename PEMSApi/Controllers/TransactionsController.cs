@@ -20,6 +20,18 @@ namespace PEMSApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTransactions([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
+            var totalIncome = await _context.Transactions
+                    .Include(t => t.Category)
+                    .Where(t => t.Category!.Type == false)
+                    .SumAsync(t => t.Amount);
+
+            var totalExpense = await _context.Transactions
+                    .Include(t => t.Category)
+                    .Where(t => t.Category!.Type == true)
+                    .SumAsync(t => t.Amount);
+
+            var balance = totalIncome - totalExpense;
+
             var skipAmount = (pageNumber - 1) * pageSize;
 
             var transactions = await _context.Transactions
@@ -37,7 +49,10 @@ namespace PEMSApi.Controllers
                 TotalRecords = totalRecords,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
-                TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+                TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
+                TotalIncome = totalIncome,
+                TotalExpense = totalExpense,
+                Balance = balance
             };
 
             return Ok(response);
