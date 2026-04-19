@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PEMSApi.Models
 {
-    public class Transaction
+    public class Transaction : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         [Column(TypeName = "decimal(18,0)")]
         public decimal Amount { get; set; }

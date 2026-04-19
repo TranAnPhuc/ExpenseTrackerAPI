@@ -35,10 +35,16 @@ namespace PEMSApi.Controllers
             var skipAmount = (pageNumber - 1) * pageSize;
 
             var transactions = await _context.Transactions
-                .Include(t => t.Category)
                 .OrderByDescending(t => t.TransactionDate)
                 .Skip(skipAmount)
                 .Take(pageSize)
+                .Select(t => new TransactionResponseDto
+                {
+                    Id = t.Id,
+                    Amount = t.Amount,
+                    CategoryName = t.Category != null ? t.Category.Name : "Khong xac dinh",
+                    TransactionDate = t.TransactionDate
+                })
                 .ToListAsync();
 
             var totalRecords = await _context.Transactions.CountAsync();
